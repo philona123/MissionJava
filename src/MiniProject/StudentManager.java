@@ -1,8 +1,6 @@
 package MiniProject;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Scanner;
+import java.util.*;
 
 public class StudentManager {
     public static void main(String[] args) {
@@ -14,7 +12,7 @@ public class StudentManager {
 //        scanner.nextLine();
 
         while(true) {
-            System.out.println("Choose your option.\n1. Add a student\n2. View all Student details\n3. Search a student by roll\n4. Remove a Student\n5.Exit");
+            System.out.println("Choose your option.\n1. Add a student\n2. View all Student details\n3. Search a student by roll\n4. Remove a Student\n5. Update Student info\n6. Sort Student by Name or Roll\n7. Exit");
             int option = scanner.nextInt();
             switch (option) {
                 case 1:
@@ -72,6 +70,49 @@ public class StudentManager {
                     break;
 
                 case 5:
+                    System.out.print("Enter the roll number to update: ");
+                    int updateRoll = scanner.nextInt();
+                    scanner.nextLine();
+
+                    if(studentRecord.containsKey(updateRoll)) {
+                        Student existing = studentRecord.get(updateRoll);
+                        System.out.print("Enter new name (leave empty to keep '" + existing.getName() + "'): ");
+                        String newName = scanner.nextLine();
+                        System.out.print("Enter new marks (or -1 to keep " + existing.getMarks() + "): ");
+                        double newMarks = scanner.nextDouble();
+                        String finalName = newName.isEmpty() ? existing.getName() : newName;
+                        double finalMarks = newMarks < 0 ? existing.getMarks() : newMarks;
+                        Student updated = new Student(finalName, updateRoll, finalMarks);
+                        studentRecord.put(updateRoll, updated);
+                        System.out.println("Student record updated successfully");
+                    } else {
+                        System.out.println("Student not found");
+                    }
+                    break;
+
+                case 6:
+                    if(studentRecord.isEmpty()) {
+                        System.out.println("No students to sort");
+                        break;
+                    }
+                    List<Student> sortedList = new ArrayList<>(studentRecord.values());
+                    System.out.println("Sort by 1. Name 2. Marks. Enter your choice");
+                    int sortChoice = scanner.nextInt();
+                    if(sortChoice == 1) {
+                        sortedList.sort(Comparator.comparing(Student::getName));
+                    } else if(sortChoice==2) {
+                        sortedList.sort(Comparator.comparing(Student::getMarks).reversed());
+                    } else {
+                        System.out.println("Invalid option");
+                        break;
+                    }
+                    System.out.println("Sorted students");
+                    for(Student st :sortedList) {
+                        System.out.println(st.getFullDetails());
+                    }
+                    break;
+
+                case 7:
                     System.out.println("Thank you!! Bye");
                     System.exit(0);
                     scanner.close();
